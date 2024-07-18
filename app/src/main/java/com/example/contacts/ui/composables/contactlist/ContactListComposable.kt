@@ -16,7 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.contacts.R
 import com.example.contacts.data.local.room.entities.ContactEntity
@@ -35,9 +35,10 @@ fun ContactListComposable(
     viewModel: ContactListViewModel = hiltViewModel<ContactListViewModel>(),
     navController: NavController
 ) {
+
     ContactListComposableUI(
         innerPadding = innerPadding,
-        viewModel.contactList.collectAsState().value,
+        viewModel.contactList.collectAsStateWithLifecycle().value,
         onClickAddContact = { navController.navigate("add-contact") }
     )
 }

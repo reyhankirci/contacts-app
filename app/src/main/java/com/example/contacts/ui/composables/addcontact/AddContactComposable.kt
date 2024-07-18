@@ -31,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -76,9 +75,9 @@ fun AddContactComposableUI(
     onClickAddContact: (name: String, phoneNum: String, desc: String) -> Unit,
     onClickCancel: () -> Unit
 ) {
-    var name by remember { mutableStateOf(TextFieldValue("")) }
-    var phoneNum by remember { mutableStateOf(TextFieldValue("")) }
-    var desc by remember { mutableStateOf(TextFieldValue("")) }
+    var name by remember { mutableStateOf("") }
+    var phoneNum by remember { mutableStateOf("") }
+    var desc by remember { mutableStateOf("") }
 
     val textFieldColors = TextFieldDefaults.colors(
         focusedContainerColor = Color.White,
@@ -121,8 +120,6 @@ fun AddContactComposableUI(
         TextField(
             modifier = Modifier.fillMaxWidth(),
             value = desc,
-
-
             label = { Text(modifier = Modifier.padding(horizontal = 8.dp), text = "Desc") },
             maxLines = 1,
             onValueChange = { newText ->
@@ -162,14 +159,14 @@ fun AddContactComposableUI(
                     Color.DarkGray
                 ),
                 onClick = {
-                    onClickAddContact(name.text, phoneNum.text, desc.text)
+                    onClickAddContact(name, phoneNum, desc)
                 },
-                enabled = phoneNum.text.isNotEmpty(),
+                enabled = phoneNum.isNotEmpty(),
                 interactionSource = interactionSourceAdd
             ) {
                 Text(
-                    text = "Add Contact",
-                    color = if (phoneNum.text.isEmpty()) Color.LightGray else Color.White
+                    text = "Save",
+                    color = if (phoneNum.isEmpty()) Color.LightGray else Color.White
                 )
             }
 
