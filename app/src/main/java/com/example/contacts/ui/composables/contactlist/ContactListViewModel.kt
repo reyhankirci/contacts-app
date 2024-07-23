@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ContactListViewModel @Inject constructor(private val contactRepo: ContactRepository) : ViewModel() {
+class ContactListViewModel @Inject constructor(private val contactRepo: ContactRepository) :
+    ViewModel() {
 
     init {
         getContactList()
@@ -28,6 +29,19 @@ class ContactListViewModel @Inject constructor(private val contactRepo: ContactR
                     is ResponseState.Success -> {
                         contactListStateFlow.value = response.data
                     }
+
+                    is ResponseState.Loading -> {}
+                    is ResponseState.Error -> {}
+                }
+            }
+        }
+    }
+
+    fun deleteContact(contactEntity: ContactEntity) {
+        viewModelScope.launch {
+            contactRepo.delete(contactEntity).collect { response ->
+                when (response) {
+                    is ResponseState.Success -> {}
                     is ResponseState.Loading -> {}
                     is ResponseState.Error -> {}
                 }

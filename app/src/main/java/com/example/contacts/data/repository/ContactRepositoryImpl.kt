@@ -17,8 +17,10 @@ class ContactRepositoryImpl @Inject constructor(private val contactDao: ContactD
         }.asResponseState()
     }
 
-    override suspend fun delete(contactEntity: ContactEntity): Int {
-        return contactDao.delete(contactEntity)
+    override suspend fun delete(contactEntity: ContactEntity): Flow<ResponseState<Int>> {
+        return flow {
+            emit(contactDao.delete(contactEntity))
+        }.asResponseState()
     }
 
     override suspend fun update(contactEntity: ContactEntity): Int {

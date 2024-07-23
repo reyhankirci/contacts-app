@@ -8,7 +8,7 @@ interface ContactRepository {
 
     suspend fun insert(contactEntity: ContactEntity): Flow<ResponseState<Long>>
 
-    suspend fun delete(contactEntity: ContactEntity): Int
+    suspend fun delete(contactEntity: ContactEntity): Flow<ResponseState<Int>>
 
     suspend fun update(contactEntity: ContactEntity): Int
 

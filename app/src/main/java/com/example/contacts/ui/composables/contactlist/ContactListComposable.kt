@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -27,7 +29,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.contacts.R
 import com.example.contacts.data.local.room.entities.ContactEntity
+import com.example.contacts.ui.components.MAnchoredDraggableBox
 import com.example.contacts.ui.components.MContactItem
+import com.example.contacts.ui.components.MContentItemDelete
 
 @Composable
 fun ContactListComposable(
@@ -39,7 +43,8 @@ fun ContactListComposable(
     ContactListComposableUI(
         innerPadding = innerPadding,
         viewModel.contactList.collectAsStateWithLifecycle().value,
-        onClickAddContact = { navController.navigate("add-contact") }
+        onClickAddContact = { navController.navigate("add-contact") },
+        onClickDelete = { contactEntity -> viewModel.deleteContact(contactEntity) }
     )
 }
 
@@ -47,7 +52,8 @@ fun ContactListComposable(
 fun ContactListComposableUI(
     innerPadding: PaddingValues,
     contactList: List<ContactEntity>,
-    onClickAddContact: () -> Unit
+    onClickAddContact: () -> Unit,
+    onClickDelete: (contactEntity: ContactEntity) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -77,9 +83,21 @@ fun ContactListComposableUI(
         Spacer(modifier = Modifier.size(16.dp))
         LazyColumn {
             items(contactList) { contact ->
-                MContactItem(
-                    modifier = Modifier.background(Color.DarkGray),
-                    item = contact
+                MAnchoredDraggableBox(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    firstContent = { modifier ->
+                        MContactItem(
+                            modifier = modifier.background(Color.DarkGray),
+                            item = contact
+                        )
+                    },
+                    secondContent = { modifier ->
+                        MContentItemDelete(
+                            modifier = modifier,
+                            onClick = { onClickDelete.invoke(contact) })
+                    },
+                    secondContentWidthSize = 100.dp
                 )
                 HorizontalDivider(color = Color.Gray)
             }
@@ -98,6 +116,7 @@ fun ContactListComposableUIPreview() {
             ContactEntity(R.drawable.ic_account_circle, "My Manager", "545169721", "Work"),
             ContactEntity(R.drawable.ic_account_circle, "Tom Cruise", "545169721", "Actor")
         ),
-        onClickAddContact = {}
+        onClickAddContact = {},
+        onClickDelete = { _ -> }
     )
 }
