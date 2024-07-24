@@ -6,10 +6,12 @@ import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.snapTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +27,8 @@ fun MAnchoredDraggableBox(
     modifier: Modifier,
     firstContent: @Composable (modifier: Modifier) -> Unit,
     secondContent: @Composable (modifier: Modifier) -> Unit,
-    secondContentWidthSize: Dp
+    secondContentWidthSize: Dp,
+    returnInitialState: Boolean
 ) {
     val density = LocalDensity.current
     val positionalThresholds: (totalDistance: Float) -> Float =
@@ -48,6 +51,13 @@ fun MAnchoredDraggableBox(
             updateAnchors(newAnchors)
         }
     }
+
+    LaunchedEffect(key1 = returnInitialState) {
+        if (returnInitialState) {
+            state.snapTo(DragAnchors.Start)
+        }
+    }
+
     Box(
         modifier = modifier
     ) {

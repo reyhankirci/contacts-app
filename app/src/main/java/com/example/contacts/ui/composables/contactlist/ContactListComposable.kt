@@ -18,6 +18,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -83,6 +85,7 @@ fun ContactListComposableUI(
         Spacer(modifier = Modifier.size(16.dp))
         LazyColumn {
             items(contactList) { contact ->
+                val isItemDeleted = remember { mutableStateOf(false) }
                 MAnchoredDraggableBox(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -95,9 +98,13 @@ fun ContactListComposableUI(
                     secondContent = { modifier ->
                         MContentItemDelete(
                             modifier = modifier,
-                            onClick = { onClickDelete.invoke(contact) })
+                            onClick = {
+                                onClickDelete.invoke(contact)
+                                isItemDeleted.value = true
+                            })
                     },
-                    secondContentWidthSize = 100.dp
+                    secondContentWidthSize = 100.dp,
+                    returnInitialState = isItemDeleted.value
                 )
                 HorizontalDivider(color = Color.Gray)
             }
