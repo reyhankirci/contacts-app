@@ -27,7 +27,7 @@ fun MAnchoredDraggableBox(
     modifier: Modifier,
     firstContent: @Composable (modifier: Modifier) -> Unit,
     secondContent: @Composable (modifier: Modifier) -> Unit,
-    secondContentWidthSize: Dp,
+    offsetSize: Dp,
     returnInitialState: Boolean
 ) {
     val density = LocalDensity.current
@@ -45,7 +45,7 @@ fun MAnchoredDraggableBox(
             val newAnchors = with(density) {
                 DraggableAnchors {
                     DragAnchors.Start at 0.dp.toPx()
-                    DragAnchors.End at -secondContentWidthSize.toPx()
+                    DragAnchors.End at -offsetSize.toPx()
                 }
             }
             updateAnchors(newAnchors)
@@ -78,7 +78,7 @@ fun MAnchoredDraggableBox(
                 .align(Alignment.CenterEnd)
                 .offset {
                     IntOffset(
-                        (state.requireOffset() + secondContentWidthSize.toPx()).roundToInt(), 0
+                        (state.requireOffset() + offsetSize.toPx()).roundToInt(), 0
                     )
                 }
                 .anchoredDraggable(state, Orientation.Horizontal)

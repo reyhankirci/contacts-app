@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -86,6 +86,7 @@ fun ContactListComposableUI(
         LazyColumn {
             items(contactList) { contact ->
                 val isItemDeleted = remember { mutableStateOf(false) }
+                val deleteComponentWidthSize = 100.dp
                 MAnchoredDraggableBox(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -97,13 +98,13 @@ fun ContactListComposableUI(
                     },
                     secondContent = { modifier ->
                         MContentItemDelete(
-                            modifier = modifier,
+                            modifier = modifier.width(deleteComponentWidthSize),
                             onClick = {
                                 onClickDelete.invoke(contact)
                                 isItemDeleted.value = true
                             })
                     },
-                    secondContentWidthSize = 100.dp,
+                    offsetSize = deleteComponentWidthSize,
                     returnInitialState = isItemDeleted.value
                 )
                 HorizontalDivider(color = Color.Gray)
