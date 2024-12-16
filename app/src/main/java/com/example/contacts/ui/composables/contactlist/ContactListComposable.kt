@@ -1,5 +1,6 @@
 package com.example.contacts.ui.composables.contactlist
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,16 +14,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,6 +39,7 @@ import com.example.contacts.data.local.room.entities.ContactEntity
 import com.example.contacts.ui.components.MAnchoredDraggableBox
 import com.example.contacts.ui.components.MContactItem
 import com.example.contacts.ui.components.MContentItemDelete
+import com.example.contacts.ui.composables.base.BaseViewState
 
 @Composable
 fun ContactListComposable(
@@ -41,18 +47,42 @@ fun ContactListComposable(
     viewModel: ContactListViewModel = hiltViewModel<ContactListViewModel>(),
     navController: NavController
 ) {
+    var contactList by remember { mutableStateOf(listOf<ContactEntity>()) }
+    var isLoading by remember { mutableStateOf(false) }
+
+    viewModel.viewState.collectAsStateWithLifecycle().value.let { value ->
+        when (value) {
+            BaseViewState.Inactive -> {}
+            BaseViewState.Loading -> {
+                isLoading = true
+            }
+            is BaseViewState.Success -> {
+                contactList = value.data as List<ContactEntity>
+                isLoading = false
+            }
+
+            is BaseViewState.Error -> {
+                isLoading = false
+                Toast.makeText(LocalContext.current , "Somethings went wrong!", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+
 
     ContactListComposableUI(
         innerPadding = innerPadding,
-        viewModel.contactList.collectAsStateWithLifecycle().value,
+        isLoading,
+        contactList,
         onClickAddContact = { navController.navigate("add-contact") },
-        onClickDelete = { contactEntity -> viewModel.deleteContact(contactEntity) }
+        onClickDelete = { contactEntity ->  viewModel.sendIntent(ContactListIntent.DeleteContactItem(contactEntity))}
     )
 }
 
 @Composable
 fun ContactListComposableUI(
     innerPadding: PaddingValues,
+    isLoading: Boolean,
     contactList: List<ContactEntity>,
     onClickAddContact: () -> Unit,
     onClickDelete: (contactEntity: ContactEntity) -> Unit
@@ -61,8 +91,17 @@ fun ContactListComposableUI(
         modifier = Modifier
             .background(Color.DarkGray)
             .padding(innerPadding)
-            .fillMaxSize()
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.width(64.dp),
+                color = Color.White,
+                trackColor = Color.Gray,
+            )
+            return
+        }
         Row {
             MContactItem(
                 modifier = Modifier
@@ -118,6 +157,7 @@ fun ContactListComposableUI(
 fun ContactListComposableUIPreview() {
     ContactListComposableUI(
         innerPadding = PaddingValues(16.dp),
+        isLoading = false,
         contactList = listOf(
             ContactEntity(R.drawable.ic_account_circle, "My Mom", "545169721", "Family"),
             ContactEntity(R.drawable.ic_account_circle, "My Dad", "545169721", "Family"),
