@@ -1,5 +1,6 @@
 package com.example.contacts.ui.composables.addcontact
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,17 +24,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.contacts.R
 import com.example.contacts.data.local.room.entities.ContactEntity
@@ -45,23 +47,35 @@ fun AddContactComposable(
     viewModel: AddContactViewModel = hiltViewModel<AddContactViewModel>(),
     navController: NavController
 ) {
-    val isAddedContact by viewModel.isAddedContact
+    viewModel.viewState.collectAsStateWithLifecycle().value.let { value ->
+        when (value) {
+            AddContactViewState.Inactive -> {}
+            AddContactViewState.Loading -> {}
 
-    LaunchedEffect(key1 = isAddedContact) {
-        if (isAddedContact) {
-            navController.navigateUp()
+            is AddContactViewState.ContactIsAdded -> {
+                if (value.data) {
+                    navController.navigateUp()
+                }
+            }
+
+            is AddContactViewState.Error -> {
+                Toast.makeText(LocalContext.current, "Somethings went wrong!", Toast.LENGTH_LONG)
+                    .show()
+            }
         }
     }
 
     AddContactComposableUI(
         innerPadding = innerPadding,
         onClickAddContact = { name, phoneNum, desc ->
-            viewModel.insertContact(
-                ContactEntity(
-                    imageResId = R.drawable.ic_account_circle,
-                    name = name,
-                    phoneNum = phoneNum,
-                    desc = desc
+            viewModel.sendIntent(
+                AddContactIntent.AddContact(
+                    ContactEntity(
+                        imageResId = R.drawable.ic_account_circle,
+                        name = name,
+                        phoneNum = phoneNum,
+                        desc = desc
+                    )
                 )
             )
         },

@@ -1,33 +1,42 @@
 package com.example.contacts.ui.composables.addcontact
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.contacts.data.ResponseState
 import com.example.contacts.data.local.room.entities.ContactEntity
 import com.example.contacts.data.repository.ContactRepository
+import com.example.contacts.ui.composables.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AddContactViewModel @Inject constructor(private val contactRepo: ContactRepository) :
-    ViewModel() {
+    BaseViewModel<AddContactIntent, AddContactViewState>(AddContactViewState.Inactive) {
 
-    private val isAddedContactStateFlow = mutableStateOf(false)
-    val isAddedContact: State<Boolean> = isAddedContactStateFlow
+    override fun handleIntent(intent: AddContactIntent) {
+        when (intent) {
+            is AddContactIntent.AddContact -> {
+                insertContact(intent.contactEntity)
+            }
+        }
+    }
 
-    fun insertContact(contactEntity: ContactEntity) {
+    private fun insertContact(contactEntity: ContactEntity) {
         viewModelScope.launch {
             contactRepo.insert(contactEntity).collect { response ->
                 when (response) {
                     is ResponseState.Success -> {
-                        isAddedContactStateFlow.value = response.data != 0L
+                        viewStateFlow.value =
+                            AddContactViewState.ContactIsAdded(response.data != 0L)
                     }
 
-                    is ResponseState.Loading -> {}
-                    is ResponseState.Error -> {}
+                    is ResponseState.Loading -> {
+                        viewStateFlow.value = AddContactViewState.Loading
+                    }
+
+                    is ResponseState.Error -> {
+                        viewStateFlow.value = AddContactViewState.Error(response.exception)
+                    }
                 }
             }
         }

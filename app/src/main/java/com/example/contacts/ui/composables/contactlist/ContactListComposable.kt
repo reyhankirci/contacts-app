@@ -39,7 +39,6 @@ import com.example.contacts.data.local.room.entities.ContactEntity
 import com.example.contacts.ui.components.MAnchoredDraggableBox
 import com.example.contacts.ui.components.MContactItem
 import com.example.contacts.ui.components.MContentItemDelete
-import com.example.contacts.ui.composables.base.BaseViewState
 
 @Composable
 fun ContactListComposable(
@@ -52,18 +51,26 @@ fun ContactListComposable(
 
     viewModel.viewState.collectAsStateWithLifecycle().value.let { value ->
         when (value) {
-            BaseViewState.Inactive -> {}
-            BaseViewState.Loading -> {
+            ContactListViewState.Inactive -> {}
+            ContactListViewState.Loading -> {
                 isLoading = true
             }
-            is BaseViewState.Success -> {
-                contactList = value.data as List<ContactEntity>
+
+            is ContactListViewState.ContactListData -> {
+                contactList = value.data
                 isLoading = false
             }
 
-            is BaseViewState.Error -> {
+            is ContactListViewState.ContactIsDeleted -> {
                 isLoading = false
-                Toast.makeText(LocalContext.current , "Somethings went wrong!", Toast.LENGTH_LONG).show()
+                Toast.makeText(LocalContext.current, "The contact is deleted!", Toast.LENGTH_LONG)
+                    .show()
+            }
+
+            is ContactListViewState.Error -> {
+                isLoading = false
+                Toast.makeText(LocalContext.current, "Somethings went wrong!", Toast.LENGTH_LONG)
+                    .show()
             }
         }
     }
@@ -75,7 +82,13 @@ fun ContactListComposable(
         isLoading,
         contactList,
         onClickAddContact = { navController.navigate("add-contact") },
-        onClickDelete = { contactEntity ->  viewModel.sendIntent(ContactListIntent.DeleteContactItem(contactEntity))}
+        onClickDelete = { contactEntity ->
+            viewModel.sendIntent(
+                ContactListIntent.DeleteContactItem(
+                    contactEntity
+                )
+            )
+        }
     )
 }
 
