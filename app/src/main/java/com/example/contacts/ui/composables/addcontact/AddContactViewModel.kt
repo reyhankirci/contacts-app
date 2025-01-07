@@ -11,17 +11,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddContactViewModel @Inject constructor(private val contactRepo: ContactRepository) :
-    BaseViewModel<AddContactIntent, AddContactViewState>(AddContactViewState.Inactive) {
+    BaseViewModel<AddContactViewState>(AddContactViewState.Inactive) {
 
-    override fun handleIntent(intent: AddContactIntent) {
-        when (intent) {
-            is AddContactIntent.AddContact -> {
-                insertContact(intent.contactEntity)
-            }
-        }
-    }
-
-    private fun insertContact(contactEntity: ContactEntity) {
+        fun insertContact(contactEntity: ContactEntity) {
         viewModelScope.launch {
             contactRepo.insert(contactEntity).collect { response ->
                 when (response) {

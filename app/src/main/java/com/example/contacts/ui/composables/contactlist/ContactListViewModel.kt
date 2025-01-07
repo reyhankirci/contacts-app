@@ -11,10 +11,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContactListViewModel @Inject constructor(private val contactRepo: ContactRepository) :
-    BaseViewModel<ContactListIntent, ContactListViewState>(ContactListViewState.Inactive) {
+    BaseViewModel<ContactListViewState>(ContactListViewState.Inactive) {
 
     init {
-        sendIntent(ContactListIntent.FetchContactList)
+        getContactList()
     }
 
     private fun getContactList() {
@@ -35,7 +35,7 @@ class ContactListViewModel @Inject constructor(private val contactRepo: ContactR
         }
     }
 
-    private fun deleteContact(contactEntity: ContactEntity) {
+    fun deleteContact(contactEntity: ContactEntity) {
         viewModelScope.launch {
             contactRepo.delete(contactEntity).collect { response ->
                 when (response) {
@@ -49,17 +49,6 @@ class ContactListViewModel @Inject constructor(private val contactRepo: ContactR
                         viewStateFlow.value = ContactListViewState.Error(response.exception)
                     }
                 }
-            }
-        }
-    }
-
-    override fun handleIntent(intent: ContactListIntent) {
-        when(intent) {
-            ContactListIntent.FetchContactList -> {
-                getContactList()
-            }
-            is ContactListIntent.DeleteContactItem -> {
-                deleteContact(intent.contactEntity)
             }
         }
     }

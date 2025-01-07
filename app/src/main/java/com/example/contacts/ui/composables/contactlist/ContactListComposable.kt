@@ -83,11 +83,7 @@ fun ContactListComposable(
         contactList,
         onClickAddContact = { navController.navigate("add-contact") },
         onClickDelete = { contactEntity ->
-            viewModel.sendIntent(
-                ContactListIntent.DeleteContactItem(
-                    contactEntity
-                )
-            )
+            viewModel.deleteContact(contactEntity)
         }
     )
 }

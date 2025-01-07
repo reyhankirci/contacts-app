@@ -68,14 +68,12 @@ fun AddContactComposable(
     AddContactComposableUI(
         innerPadding = innerPadding,
         onClickAddContact = { name, phoneNum, desc ->
-            viewModel.sendIntent(
-                AddContactIntent.AddContact(
-                    ContactEntity(
-                        imageResId = R.drawable.ic_account_circle,
-                        name = name,
-                        phoneNum = phoneNum,
-                        desc = desc
-                    )
+            viewModel.insertContact(
+                ContactEntity(
+                    imageResId = R.drawable.ic_account_circle,
+                    name = name,
+                    phoneNum = phoneNum,
+                    desc = desc
                 )
             )
         },
