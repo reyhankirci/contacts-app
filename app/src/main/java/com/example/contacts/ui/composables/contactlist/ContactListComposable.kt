@@ -2,6 +2,7 @@ package com.example.contacts.ui.composables.contactlist
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -104,11 +105,19 @@ fun ContactListComposableUI(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.width(64.dp),
-                color = Color.White,
-                trackColor = Color.Gray,
-            )
+            Column(
+                modifier = Modifier
+                    .background(Color.DarkGray)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.width(48.dp),
+                    color = Color.White,
+                    trackColor = Color.Gray,
+                )
+            }
             return
         }
         Row {
