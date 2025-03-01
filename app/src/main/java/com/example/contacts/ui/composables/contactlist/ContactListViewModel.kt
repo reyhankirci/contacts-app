@@ -3,14 +3,18 @@ package com.example.contacts.ui.composables.contactlist
 import androidx.lifecycle.viewModelScope
 import com.example.contacts.data.ResponseState
 import com.example.contacts.data.local.room.entities.ContactEntity
-import com.example.contacts.data.repository.ContactRepository
+import com.example.contacts.data.repository.contact.ContactRepository
+import com.example.contacts.di.managers.UserManager
 import com.example.contacts.ui.composables.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ContactListViewModel @Inject constructor(private val contactRepo: ContactRepository) :
+class ContactListViewModel @Inject constructor(
+    private val contactRepo: ContactRepository,
+    val userManager: UserManager
+) :
     BaseViewModel<ContactListViewState>(ContactListViewState.Inactive) {
 
     init {

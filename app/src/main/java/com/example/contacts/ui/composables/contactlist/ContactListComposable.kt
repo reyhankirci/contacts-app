@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.contacts.R
 import com.example.contacts.data.local.room.entities.ContactEntity
+import com.example.contacts.data.local.room.entities.UserEntity
 import com.example.contacts.ui.components.MAnchoredDraggableBox
 import com.example.contacts.ui.components.MContactItem
 import com.example.contacts.ui.components.MContentItemDelete
@@ -49,6 +50,12 @@ fun ContactListComposable(
 ) {
     var contactList by remember { mutableStateOf(listOf<ContactEntity>()) }
     var isLoading by remember { mutableStateOf(false) }
+    val isUserSessionStarted by remember { viewModel.userManager.isUserSessionStarted }
+
+    var userData: UserEntity? = null
+    if (isUserSessionStarted) {
+        userData = viewModel.userManager.getUserData()
+    }
 
     viewModel.viewState.collectAsStateWithLifecycle().value.let { value ->
         when (value) {
@@ -81,6 +88,7 @@ fun ContactListComposable(
     ContactListComposableUI(
         innerPadding = innerPadding,
         isLoading,
+        userData,
         contactList,
         onClickAddContact = { navController.navigate("add-contact") },
         onClickDelete = { contactEntity ->
@@ -93,6 +101,7 @@ fun ContactListComposable(
 fun ContactListComposableUI(
     innerPadding: PaddingValues,
     isLoading: Boolean,
+    userData: UserEntity?,
     contactList: List<ContactEntity>,
     onClickAddContact: () -> Unit,
     onClickDelete: (contactEntity: ContactEntity) -> Unit
@@ -125,7 +134,7 @@ fun ContactListComposableUI(
                 modifier = Modifier
                     .background(Color.DarkGray)
                     .weight(0.8f),
-                item = ContactEntity(R.drawable.ic_account_circle, "Me", "1245635844", "My number")
+                item = ContactEntity(R.drawable.ic_account_circle, userData?.userName.toString(), userData?.phoneNum.toString(), "")
             )
             IconButton(
                 modifier = Modifier
@@ -176,6 +185,7 @@ fun ContactListComposableUIPreview() {
     ContactListComposableUI(
         innerPadding = PaddingValues(16.dp),
         isLoading = false,
+        userData = UserEntity("","","",""),
         contactList = listOf(
             ContactEntity(R.drawable.ic_account_circle, "My Mom", "545169721", "Family"),
             ContactEntity(R.drawable.ic_account_circle, "My Dad", "545169721", "Family"),

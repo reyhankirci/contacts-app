@@ -3,8 +3,8 @@ package com.example.contacts.di
 import android.app.Application
 import androidx.room.Room
 import com.example.contacts.data.local.room.AppDatabase
-import com.example.contacts.data.repository.ContactRepository
-import com.example.contacts.data.repository.ContactRepositoryImpl
+import com.example.contacts.data.repository.contact.ContactRepository
+import com.example.contacts.data.repository.contact.ContactRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

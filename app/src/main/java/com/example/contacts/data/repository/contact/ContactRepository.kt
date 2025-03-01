@@ -1,4 +1,4 @@
-package com.example.contacts.data.repository
+package com.example.contacts.data.repository.contact
 
 import com.example.contacts.data.ResponseState
 import com.example.contacts.data.local.room.entities.ContactEntity

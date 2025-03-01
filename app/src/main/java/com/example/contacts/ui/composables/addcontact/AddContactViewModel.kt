@@ -3,7 +3,7 @@ package com.example.contacts.ui.composables.addcontact
 import androidx.lifecycle.viewModelScope
 import com.example.contacts.data.ResponseState
 import com.example.contacts.data.local.room.entities.ContactEntity
-import com.example.contacts.data.repository.ContactRepository
+import com.example.contacts.data.repository.contact.ContactRepository
 import com.example.contacts.ui.composables.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
