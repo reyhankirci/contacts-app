@@ -134,7 +134,7 @@ fun ContactListComposableUI(
                 modifier = Modifier
                     .background(Color.DarkGray)
                     .weight(0.8f),
-                item = ContactEntity(R.drawable.ic_account_circle, userData?.userName.toString(), userData?.phoneNum.toString(), "")
+                item = ContactEntity(R.drawable.ic_account_circle, userData?.userName ?: "", userData?.phoneNum ?: "", "")
             )
             IconButton(
                 modifier = Modifier

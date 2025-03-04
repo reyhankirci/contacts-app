@@ -86,7 +86,7 @@ class LoginActivity: ComponentActivity() {
     }
 
     private fun createUserSessionAndFinish() {
-        userManager.createUserSession(UserEntity("12354485656dewedhqdjqwkjn", "test name", "test surname", "1234567"))
+        userManager.createUserSession(UserEntity("test userId", "test name", "test surname", "1234567"))
         finish()
     }
 
